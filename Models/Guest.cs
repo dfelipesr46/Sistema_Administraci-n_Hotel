@@ -49,5 +49,8 @@ namespace PruebaNET_DiegoFelipeSalamanca.Models
         [DataType(DataType.Date)]
         [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:dd-MM-yyyy}")]
         public DateTime Birthdate { get; set; }
+
+        public ICollection<Booking> Bookings { get; set; }
+
     }
 }

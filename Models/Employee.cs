@@ -41,12 +41,15 @@ namespace PruebaNET_DiegoFelipeSalamanca.Models
         [MaxLength(20, ErrorMessage = "The identification number can't be longer than {1} characters.")]
         [MinLength(1, ErrorMessage = "The identification number can't be shorter than {1} character.")]
         public string IdentificationNumber { get; set; }
-        
+
 
         [Required(ErrorMessage = "The password is required.")]
         [Column("password")]
         [MaxLength(100, ErrorMessage = "The password can't be longer than {1} characters.")]
         [MinLength(8, ErrorMessage = "The password must be at least {1} characters long.")]
         public string Password { get; set; }
+
+        public ICollection<Booking> Bookings { get; set; }
+
     }
 }

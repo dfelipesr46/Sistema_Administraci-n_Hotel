@@ -34,5 +34,8 @@ namespace PruebaNET_DiegoFelipeSalamanca.Models
         [Column("max_occupancy")]
         [Range(1, int.MaxValue, ErrorMessage = "The max occupancy must be at least 1 person.")]
         public int MaxOccupancyPersons { get; set; }
+
+        public ICollection<Booking> Bookings { get; set; }
+
     }
 }

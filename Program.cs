@@ -20,8 +20,7 @@ var conectionDB = $"server={dbHost};port={dbPort};database={dbDatabaseName};uid=
 
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseMySql(builder.Configuration.GetConnectionString("DefaultConnection"), 
-    new MySqlServerVersion(new Version(8, 0, 32))));
+options.UseMySql(conectionDB, ServerVersion.Parse("8.0.20-my-sql")));
 
 // JWT Config autentication 
 builder.Services.AddAuthentication(options =>
