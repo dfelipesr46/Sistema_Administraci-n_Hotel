@@ -1,0 +1,6 @@
+@PruebaNET_DiegoFelipeSalamanca_HostAddress = http://localhost:5028
+
+GET {{PruebaNET_DiegoFelipeSalamanca_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
