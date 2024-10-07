@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using PruebaNET_DiegoFelipeSalamanca.Data;
+using PruebaNET_DiegoFelipeSalamanca.Seeders;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -61,6 +62,21 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
+
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    try
+    {
+        var context = services.GetRequiredService<ApplicationDbContext>();
+        await DataSeeder.SeedDataAsync(context); 
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"An error occurred while seeding the database: {ex.Message}");
+    }
+}
+
 
 app.MapControllers();
 
