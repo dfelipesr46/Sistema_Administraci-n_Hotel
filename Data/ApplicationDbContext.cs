@@ -18,6 +18,7 @@ namespace PruebaNET_DiegoFelipeSalamanca.Data
         public DbSet<Guest> Guests { get; set; }
         public DbSet<RoomType> RoomTypes { get; set; }
         public DbSet<Employee> Employees { get; set; }
+        public DbSet<RoomStatus> RoomStatuses { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

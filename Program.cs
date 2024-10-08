@@ -3,8 +3,11 @@ using DotNetEnv;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using PruebaNET_DiegoFelipeSalamanca.Data;
+using PruebaNET_DiegoFelipeSalamanca.Repositories;
 using PruebaNET_DiegoFelipeSalamanca.Seeders;
+using PruebaNET_DiegoFelipeSalamanca.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -47,16 +50,31 @@ builder.Services.AddAuthentication(options =>
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
 
+builder.Services.AddScoped<IHotelService, HotelService>();
+builder.Services.AddScoped<IRoomStatusService, RoomStatusService>();
+builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IBookingService, BookingService>();
+
+
+
+
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new OpenApiInfo { Title = "PruebaNET API", Version = "v1" });
+});
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseSwaggerUI(c =>
+{
+    c.SwaggerEndpoint("/swagger/v1/swagger.json", "PruebaNET API v1");
+    c.RoutePrefix = string.Empty; // Esto permite que Swagger UI esté en la raíz de la aplicación
+});
 }
 
 app.UseHttpsRedirection();
@@ -69,7 +87,7 @@ using (var scope = app.Services.CreateScope())
     try
     {
         var context = services.GetRequiredService<ApplicationDbContext>();
-        await DataSeeder.SeedDataAsync(context); 
+        await DataSeeder.SeedDataAsync(context);
     }
     catch (Exception ex)
     {
