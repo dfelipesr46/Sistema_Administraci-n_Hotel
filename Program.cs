@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using PruebaNET_DiegoFelipeSalamanca.Data;
+using PruebaNET_DiegoFelipeSalamanca.Middlewares;
 using PruebaNET_DiegoFelipeSalamanca.Repositories;
 using PruebaNET_DiegoFelipeSalamanca.Seeders;
 using PruebaNET_DiegoFelipeSalamanca.Services;
@@ -55,6 +56,7 @@ builder.Services.AddScoped<IHotelService, HotelService>();
 builder.Services.AddScoped<IRoomStatusService, RoomStatusService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IBookingService, BookingService>();
+builder.Services.AddScoped<ITokenService, TokenService>();
 
 
 
@@ -76,6 +78,9 @@ if (app.Environment.IsDevelopment())
     c.RoutePrefix = string.Empty; // Esto permite que Swagger UI esté en la raíz de la aplicación
 });
 }
+
+app.UseMiddleware<ErrorHandlingMiddleware>();
+app.UseMiddleware<JwtMiddleware>();
 
 app.UseHttpsRedirection();
 
