@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using PruebaNET_DiegoFelipeSalamanca.Data;
+using PruebaNET_DiegoFelipeSalamanca.DTOs;
 using PruebaNET_DiegoFelipeSalamanca.Models;
 using PruebaNET_DiegoFelipeSalamanca.Repositories;
 
@@ -28,12 +29,23 @@ namespace PruebaNET_DiegoFelipeSalamanca.Services
         public async Task<Booking> GetBookingByIdAsync(int id)
         {
             return await _context.Bookings
-                .Include(b => b.Guest)
-                .FirstOrDefaultAsync(b => b.Id == id);
+        .Include(b => b.Guest)
+        .Include(b => b.Room)
+        .FirstOrDefaultAsync(b => b.Id == id);
         }
 
-        public async Task<Booking> CreateBookingAsync(Booking booking)
+        public async Task<Booking> CreateBookingAsync(BookingDto bookingDto)
         {
+            var booking = new Booking
+            {
+                GuestId = bookingDto.GuestId,
+                RoomId = bookingDto.RoomId,
+                EmployeeId = bookingDto.EmployeeId,
+                StartDate = bookingDto.CheckInDate,
+                EndDate = bookingDto.CheckOutDate,
+                TotalCost = bookingDto.TotalCost,
+            };
+
             _context.Bookings.Add(booking);
             await _context.SaveChangesAsync();
             return booking;
@@ -49,5 +61,6 @@ namespace PruebaNET_DiegoFelipeSalamanca.Services
             await _context.SaveChangesAsync();
             return true;
         }
+
     }
 }

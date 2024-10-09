@@ -65,18 +65,32 @@ namespace PruebaNET_DiegoFelipeSalamanca.Seeders
             for (int i = 1; i <= 50; i++) // 50 habitaciones
             {
                 var roomType = roomTypes[i % roomTypes.Count]; // Alternar entre los tipos de habitación
-
                 var room = new Room
                 {
                     RoomNumber = $"R{i}",
                     RoomTypeId = roomType.Id,
                     Availability = true,
                 };
-
                 context.Rooms.Add(room);
             }
-
             context.SaveChanges();
+        }
+
+
+        public static async Task SeedData(ApplicationDbContext context)
+        {
+            // Datos de habitaciones ya existentes
+
+            // Agregar huéspedes
+            var guests = AdditionalDataSeeders.GetGuests(10); // Cambia 10 por el número de huéspedes que deseas
+            await context.Guests.AddRangeAsync(guests);
+
+            // Agregar reservas
+            var rooms = await context.Rooms.ToListAsync(); // Obtener habitaciones existentes
+            var bookings = AdditionalDataSeeders.GetBookings(guests, rooms, 20); // Cambia 20 por el número de reservas que deseas
+            await context.Bookings.AddRangeAsync(bookings);
+
+            await context.SaveChangesAsync();
         }
     }
 

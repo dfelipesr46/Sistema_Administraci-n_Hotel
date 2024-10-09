@@ -27,6 +27,9 @@ var conectionDB = $"server={dbHost};port={dbPort};database={dbDatabaseName};uid=
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 options.UseMySql(conectionDB, ServerVersion.Parse("8.0.20-my-sql")));
 
+
+
+
 // JWT Config autentication 
 builder.Services.AddAuthentication(options =>
 {
@@ -47,10 +50,11 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
+
+
 // Add services to the container.
 
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 
 builder.Services.AddScoped<IHotelService, HotelService>();
 builder.Services.AddScoped<IRoomStatusService, RoomStatusService>();
@@ -67,6 +71,25 @@ builder.Services.AddSwaggerGen(c =>
     c.SwaggerDoc("v1", new OpenApiInfo { Title = "PruebaNET API", Version = "v1" });
 });
 var app = builder.Build();
+
+
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    try
+    {
+        var context = services.GetRequiredService<ApplicationDbContext>();
+        context.Database.Migrate();
+
+        await DataSeeder.SeedDataAsync(context);
+    }
+    catch (Exception ex)
+    {
+        var logger = services.GetRequiredService<ILogger<Program>>();
+        logger.LogError(ex, "An error occurred seeding the database.");
+    }
+}
+
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -85,20 +108,6 @@ app.UseMiddleware<JwtMiddleware>();
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
-
-using (var scope = app.Services.CreateScope())
-{
-    var services = scope.ServiceProvider;
-    try
-    {
-        var context = services.GetRequiredService<ApplicationDbContext>();
-        await DataSeeder.SeedDataAsync(context);
-    }
-    catch (Exception ex)
-    {
-        Console.WriteLine($"An error occurred while seeding the database: {ex.Message}");
-    }
-}
 
 
 app.MapControllers();
